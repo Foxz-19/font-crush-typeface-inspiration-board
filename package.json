@@ -1,0 +1,1 @@
+{"scripts":{"test":"node --test","test:e2e":"py -3 test/e2e.py"},"type":"module"}

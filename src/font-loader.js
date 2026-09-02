@@ -1,0 +1,3 @@
+const loaded=new Map();
+/** Load a Google Font and resolve whether it became available. @param {string} name */
+export async function loadFont(name){if(loaded.has(name))return loaded.get(name);const task=(async()=>{const id=`font-${name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;if(!document.getElementById(id)){const link=document.createElement('link');link.id=id;link.rel='stylesheet';link.href=`https://fonts.googleapis.com/css2?family=${encodeURIComponent(name).replace(/%20/g,'+')}:wght@400;500;700&display=swap`;document.head.append(link)}try{await document.fonts.load(`16px "${name.replace(/["\\]/g,'')}"`);return document.fonts.check(`16px "${name.replace(/["\\]/g,'')}"`)}catch{return false}})();loaded.set(name,task);return task}

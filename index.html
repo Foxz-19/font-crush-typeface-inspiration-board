@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Save and organize the typefaces you spot in the wild.">
+  <title>Font Crush — Typeface inspiration board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#board">Skip to board</a>
+  <header class="masthead">
+    <a class="brand" href="#board" aria-label="Font Crush home">FONT <i>CRUSH</i></a>
+    <p>Your private archive of type worth remembering.</p>
+    <button class="mobile-add" type="button" aria-controls="composer">+ Add a font</button>
+  </header>
+
+  <main>
+    <aside class="composer" id="composer" aria-labelledby="composer-title">
+      <div class="composer-head">
+        <p class="kicker">New discovery</p>
+        <h1 id="composer-title">Pin a typeface</h1>
+        <button class="close-composer icon-button" type="button" aria-label="Close form">×</button>
+      </div>
+      <form id="font-form" novalidate>
+        <div class="field">
+          <label for="font-name">Font name</label>
+          <input id="font-name" name="fontName" autocomplete="off" maxlength="80" placeholder="e.g. Playfair Display" aria-describedby="font-name-error" required>
+          <small class="field-error" id="font-name-error"></small>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" required></select>
+          </div>
+          <div class="field">
+            <label for="mood">Mood</label>
+            <select id="mood" name="mood" required></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="spotted">Spotted on</label>
+          <input id="spotted" name="spotted" maxlength="100" placeholder="Coffee shop menu" aria-describedby="spotted-error" required>
+          <small class="field-error" id="spotted-error"></small>
+        </div>
+        <div class="field">
+          <label for="sample">Sample sentence</label>
+          <textarea id="sample" name="sample" maxlength="180" rows="3" aria-describedby="sample-error" required>The quick brown fox jumps over the lazy dog.</textarea>
+          <small class="field-error" id="sample-error"></small>
+        </div>
+        <div class="live-preview" aria-label="Live font preview">
+          <span id="preview-status">Preview</span>
+          <strong id="live-preview">Aa</strong>
+        </div>
+        <p class="form-status" id="form-status" role="alert"></p>
+        <button class="primary" type="submit"><span id="submit-label">Pin to board</span><span aria-hidden="true">↗</span></button>
+      </form>
+    </aside>
+
+    <section class="workspace" id="board" aria-labelledby="board-title" tabindex="-1">
+      <div class="intro">
+        <div>
+          <p class="kicker">Typeface inspiration board</p>
+          <h2 id="board-title">Fonts you’ve<br><em>fallen for.</em></h2>
+        </div>
+        <p><span id="result-count">0</span> saved specimens<br>from the world around you.</p>
+      </div>
+
+      <div class="filters" aria-label="Filter typefaces">
+        <label>Category<select id="category-filter"></select></label>
+        <label>Mood<select id="mood-filter"></select></label>
+        <button id="clear-filters" type="button">Clear filters</button>
+      </div>
+      <div class="data-tools" aria-label="Board backup tools">
+        <button id="export-data" type="button">Export JSON</button>
+        <button id="import-data" type="button">Import JSON</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+
+      <div id="notice" class="notice" role="alert" tabindex="-1" hidden></div>
+      <div id="font-grid" class="font-grid" aria-live="polite" aria-busy="false"></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <span aria-hidden="true">Aa</span>
+        <h3>No type crushes here yet.</h3>
+        <p>Save the next typeface that makes you stop and look.</p>
+        <button class="primary empty-add" type="button">Pin your first font</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="delete-dialog" aria-labelledby="delete-title">
+    <form method="dialog">
+      <p class="kicker">Remove specimen</p>
+      <h2 id="delete-title">Let this one go?</h2>
+      <p id="delete-copy"></p>
+      <div class="dialog-actions">
+        <button value="cancel">Keep it</button>
+        <button class="danger" value="confirm">Delete font</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"><span id="toast-copy"></span><button id="undo-delete" type="button" hidden>Undo</button></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
