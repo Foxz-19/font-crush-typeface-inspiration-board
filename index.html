@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Save and organize the typefaces you spot in the wild.">
+  <meta name="theme-color" content="#f3eee5">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <title>Font Crush — Typeface inspiration board</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +16,7 @@
   <header class="masthead">
     <a class="brand" href="#board" aria-label="Font Crush home">FONT <i>CRUSH</i></a>
     <p>Your private archive of type worth remembering.</p>
-    <button class="mobile-add" type="button" aria-controls="composer">+ Add a font</button>
+    <button class="mobile-add" type="button" aria-controls="composer" aria-expanded="false">+ Add a font</button>
   </header>
 
   <main>
@@ -27,7 +29,7 @@
       <form id="font-form" novalidate>
         <div class="field">
           <label for="font-name">Font name</label>
-          <input id="font-name" name="fontName" autocomplete="off" maxlength="80" placeholder="e.g. Playfair Display" aria-describedby="font-name-error" required>
+          <input id="font-name" name="fontName" autocomplete="off" maxlength="80" placeholder="e.g. Playfair Display…" aria-describedby="font-name-error" required>
           <small class="field-error" id="font-name-error"></small>
         </div>
         <div class="form-row">
@@ -42,7 +44,7 @@
         </div>
         <div class="field">
           <label for="spotted">Spotted on</label>
-          <input id="spotted" name="spotted" maxlength="100" placeholder="Coffee shop menu" aria-describedby="spotted-error" required>
+          <input id="spotted" name="spotted" autocomplete="off" maxlength="100" placeholder="Coffee shop menu…" aria-describedby="spotted-error" required>
           <small class="field-error" id="spotted-error"></small>
         </div>
         <div class="field">
@@ -85,7 +87,7 @@
         <span aria-hidden="true">Aa</span>
         <h3>No type crushes here yet.</h3>
         <p>Save the next typeface that makes you stop and look.</p>
-        <button class="primary empty-add" type="button">Pin your first font</button>
+        <button class="primary empty-add" type="button" aria-controls="composer" aria-expanded="false">Pin your first font</button>
       </div>
     </section>
   </main>
@@ -98,6 +100,17 @@
       <div class="dialog-actions">
         <button value="cancel">Keep it</button>
         <button class="danger" value="confirm">Delete font</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="draft-dialog" aria-labelledby="draft-title">
+    <form method="dialog">
+      <p class="kicker">Unsaved changes</p>
+      <h2 id="draft-title">Discard this draft?</h2>
+      <p>Your latest changes haven’t been saved. Keep editing or discard them.</p>
+      <div class="dialog-actions">
+        <button value="keep">Keep editing</button>
+        <button class="danger" value="discard">Discard changes</button>
       </div>
     </form>
   </dialog>

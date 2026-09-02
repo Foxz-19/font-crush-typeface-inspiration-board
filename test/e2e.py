@@ -37,10 +37,13 @@ with sync_playwright() as p:
     assert page.locator("#submit-label").inner_text() == "Save changes"
     page.fill("#spotted", "Editorial cover")
     page.click("button[type=submit]")
-    assert "Editorial cover" in page.locator(".spotted").inner_text()
+    edited_spot = page.locator(".spotted").text_content()
+    assert "Editorial cover" in edited_spot, edited_spot
     page.select_option("#mood-filter", "bold")
     assert page.locator(".specimen").count() == 0
+    assert "mood=bold" in page.url
     page.click("#clear-filters")
+    assert "mood=" not in page.url
     page.click(".delete")
     assert "Lora" in page.locator("#delete-copy").inner_text()
     page.click(".danger")
@@ -51,8 +54,10 @@ with sync_playwright() as p:
     page.click(".delete")
     page.click(".danger")
     page.wait_for_selector(".specimen", state="detached")
-    page.set_input_files("#import-file", {"name": "bad.json", "mimeType": "application/json", "buffer": b"{}"})
+    attack = [{"id": '\"><img src=x onerror=alert(1)>', "fontName": "Lora", "category": "serif", "spotted": "Attack", "sample": "Unsafe", "mood": "bold", "dateSaved": "2026-01-01T00:00:00.000Z"}]
+    page.set_input_files("#import-file", {"name": "bad.json", "mimeType": "application/json", "buffer": json.dumps(attack).encode()})
     assert "Nothing was imported" in page.locator("#notice").inner_text()
+    assert page.locator("img").count() == 0
     backup = [{"id": "import-1", "fontName": "Lora", "category": "serif", "spotted": "Imported book", "sample": "Portable type.", "mood": "elegant", "dateSaved": "2026-01-01T00:00:00.000Z"}]
     page.set_input_files("#import-file", {"name": "fonts.json", "mimeType": "application/json", "buffer": json.dumps(backup).encode()})
     page.wait_for_selector(".specimen")
@@ -60,12 +65,27 @@ with sync_playwright() as p:
         page.click("#export-data")
     assert download.value.suggested_filename.startswith("font-crush-")
     page.set_viewport_size({"width": 375, "height": 812})
+    assert page.locator("#composer").get_attribute("inert") is not None
+    assert page.locator(".mobile-add").get_attribute("aria-expanded") == "false"
     page.click(".mobile-add")
     assert page.locator("#composer").evaluate("el => el.classList.contains('open')")
+    assert page.locator("#composer").get_attribute("inert") is None
+    assert page.locator(".mobile-add").get_attribute("aria-expanded") == "true"
     assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
     assert page.locator("#font-name").get_attribute("aria-describedby") == "font-name-error"
+    page.fill("#font-name", "Unsaved Draft")
     page.keyboard.press("Escape")
+    assert page.locator("#draft-dialog").evaluate("el => el.open")
+    page.click("#draft-dialog button[value=keep]")
+    assert page.locator("#composer").evaluate("el => el.classList.contains('open')")
+    page.keyboard.press("Escape")
+    page.click("#draft-dialog button[value=discard]")
     assert not page.locator("#composer").evaluate("el => el.classList.contains('open')")
+    assert page.locator("#composer").get_attribute("inert") is not None
+    page.add_script_tag(url="http://127.0.0.1:8765/node_modules/axe-core/axe.min.js")
+    axe = page.evaluate("axe.run()")
+    serious = [item for item in axe["violations"] if item["impact"] in ("serious", "critical")]
+    assert not serious, [(item["id"], [(node["target"], node["failureSummary"]) for node in item["nodes"]]) for item in serious]
     assert not errors, errors
     browser.close()
     server.shutdown()
